@@ -7,6 +7,7 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { Roles } from 'src/auth/roles-auth.decorator';
 import { RolesGuard } from 'src/auth/roles.guard';
 import { AddRoleDto } from './dto/add-role.dto';
+import { RoleValue as RolesTypes } from 'src/roles/roles.types';
 
 @ApiTags('Users')
 @Controller('users')
@@ -26,7 +27,7 @@ export class UsersController {
 
     @ApiOperation({ summary: 'Get all users'})
     @ApiResponse({ status: 200, type: [User]})
-    @Roles("ADMIN")
+    @Roles(RolesTypes.GLOBAL_ADMIN)
     @UseGuards(RolesGuard)
     @Get()
     getAll() {

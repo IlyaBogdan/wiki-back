@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { InjectModel } from '@nestjs/sequelize';
 import { Role } from './roles.model';
+import { RoleValue } from './roles.types';
 
 @Injectable()
 export class RolesService {
@@ -14,8 +15,9 @@ export class RolesService {
         const roles = await this.allRoles();
 
         if (roles.length == 0) {
-            this.create({ value: "USER" });
-            this.create({ value: "ADMIN" });
+            for (const [index, value] of Object.entries(RoleValue)) {
+                this.create({ value });
+            }
         }
     }
 
