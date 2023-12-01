@@ -17,6 +17,13 @@ async function start() {
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('/api/docs', app, document);
 
+    // app.use((req, res, next) => {
+    //     res.header('Access-Control-Expose-Headers', 'Content-Length');
+    //     res.header('Access-Control-Allow-Origin', '*');
+    // })
+
+    app.enableCors();
+    
     await app.listen(port, () => {
         console.log(`Server started on port ${port}`);
     });

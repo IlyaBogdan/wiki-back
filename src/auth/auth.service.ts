@@ -18,7 +18,6 @@ export class AuthService {
         return this.generateToken(user);
     }
 
-
     async registration(userDto: UserDto) {
         const candidate = await this.usersService.getUserByEmail(userDto.email);
 
@@ -42,9 +41,13 @@ export class AuthService {
 
     private async validateUser(userDto: UserDto) {
         const user = await this.usersService.getUserByEmail(userDto.email);
-        const passwordEquals = await bcrypt.compare(userDto.password, user.password);
 
-        if (user && passwordEquals) return user;
+        if (user) {
+            const passwordEquals = await bcrypt.compare(userDto.password, user.password);
+
+            if (passwordEquals) return user;
+        }
+        
         
         throw new UnauthorizedException({ message: 'Incorrect email or password'});
     }

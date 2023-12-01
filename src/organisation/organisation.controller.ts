@@ -20,6 +20,6 @@ export class OrganisationController {
     @UseGuards(RolesGuard)
     @Post()
     create(@Body() createDto: CreateOrganisationDto) {
-        return this.organisationService.create()
+        //return this.organisationService.create()
     }
 }
