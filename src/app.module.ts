@@ -8,6 +8,8 @@ import { Role } from "./roles/roles.model";
 import { UserRoles } from "./roles/user-roles.model";
 import { AuthModule } from './auth/auth.module';
 import { OrganisationModule } from './organisation/organisation.module';
+import { ProfileModule } from './profile/profile.module';
+import { Profile } from "./profile/profile.model";
 
 @Module({
     imports: [
@@ -22,12 +24,13 @@ import { OrganisationModule } from './organisation/organisation.module';
             password: process.env.POSTGRES_PASSWORD,
             database: process.env.POSTGRES_DB,
             autoLoadModels: true,
-            models: [User, Role, UserRoles]
+            models: [User, Role, UserRoles, Profile]
         }),
         UsersModule,
         RolesModule,
         AuthModule,
-        OrganisationModule
+        OrganisationModule,
+        ProfileModule
     ],
     controllers: [],
     providers: []

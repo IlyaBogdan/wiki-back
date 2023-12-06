@@ -31,8 +31,29 @@ export class AuthService {
         return this.generateToken(user);
     }
 
+    verifyHeader(authHeader: string) {
+        const bearer = authHeader.split(' ')[0];
+        const token = authHeader.split(' ')[1];
+
+        if (bearer !== 'Bearer' || !token) {
+            throw new HttpException('You have no roles for this request', HttpStatus.FORBIDDEN);
+        }
+
+        return this.jwtService.verify(token);
+    }
+
+    async loginedUser(headers: any) {
+        const authHeader = headers.authorization;
+        if (!authHeader) {
+            return;
+        } 
+
+        const userEncoded = this.verifyHeader(authHeader);
+        return await this.usersService.getById(userEncoded.id);
+    }
+
     private async generateToken(user: User) {
-        const payload = { email: user.email, id: user.id, roles: user.roles };
+        const payload = { email: user.email, id: user.id, roles: [user.roles], profile: user.profile };
 
         return {
             token: this.jwtService.sign(payload)
@@ -51,4 +72,6 @@ export class AuthService {
         
         throw new UnauthorizedException({ message: 'Incorrect email or password'});
     }
+
+
 }

@@ -4,13 +4,15 @@ import { JwtService } from "@nestjs/jwt";
 import { Observable } from "rxjs";
 import { ROLES_KEY } from "./roles-auth.decorator";
 import { CreateRoleDto as RoleType } from "src/roles/dto/create-role.dto";
+import { AuthService } from "./auth.service";
 
 @Injectable()
 export class RolesGuard implements CanActivate {
 
     constructor(
         private readonly jwtService: JwtService,
-        private readonly reflector: Reflector
+        private readonly reflector: Reflector,
+        private readonly authService: AuthService
     ) {}
 
     canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
@@ -28,17 +30,12 @@ export class RolesGuard implements CanActivate {
 
             const req = context.switchToHttp().getRequest();
             const authHeader = req.headers.authorization;
-            const bearer = authHeader.split(' ')[0];
-            const token = authHeader.split(' ')[1];
 
-            if (bearer !== 'Bearer' || !token) {
-                throw new HttpException('You have no roles for this request', HttpStatus.FORBIDDEN);
-            }
-
-            const user = this.jwtService.verify(token);
+            const user = this.authService.verifyHeader(authHeader);
+            
             req.user = user;
 
-            return user.roles.some((role: RoleType) => requiredRoles.includes(role.value));
+            return user.roles[0].some((role: RoleType) => requiredRoles.includes(role.value));
 
         } catch (e) {
             throw new HttpException('You have no roles for this request', HttpStatus.FORBIDDEN);

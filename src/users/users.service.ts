@@ -23,6 +23,29 @@ export class UsersService {
         return user;
     }
 
+    async getById(id: number, includeAll=false) {
+        const user = await this.userRepository.findByPk(id, includeAll ? { include: { all: true }} : {});
+        if (user) return user;
+
+        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+
+    async update(userId: number, dto: CreateUserDto) {
+        const user = await this.getById(userId);
+
+        Object.assign(user, dto);
+        await user.save();
+        
+        return user;
+    }
+
+    async delete(userId: number) {
+        const user = await this.getById(userId);
+        await user.destroy();
+
+        return user;
+    }
+
     async getAll() {
         const users = await this.userRepository.findAll({ include: { all: true }});
         return users;
@@ -34,9 +57,9 @@ export class UsersService {
 
     async assignRole(dto: AddRoleDto) {
         const role = await this.roleService.getRoleByValue(dto.value);
-        const user = await this.userRepository.findByPk(dto.userId);
+        const user = await this.getById(dto.userId);
 
-        if (role && user) {
+        if (role) {
             await user.$add('role', role.id);
             return dto;
         }
