@@ -17,11 +17,11 @@ export class Profile extends Model<Profile, ProfileCreationAttrs> {
 
     @ApiProperty({ example: 'Johnny', description: 'First Name'})
     @Column({type: DataType.STRING, unique: true})
-    first_name: string;
+    firstName: string;
 
     @ApiProperty({ example: 'Silverhand', description: 'Last Name'})
     @Column({type: DataType.STRING, unique: true})
-    last_name: string;
+    lastName: string;
 
     // @ApiProperty({ example: 'Silverhand', description: 'Last Name'})
     // @Column({type: DataType.STRING, unique: true})

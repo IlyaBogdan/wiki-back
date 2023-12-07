@@ -27,7 +27,8 @@ export class UsersController {
     @ApiOperation({ summary: 'Get user info'})
     @ApiResponse({ status: 200, type: User})
     @Get(':id/')
-    read(@Param() id: number) {
+    read(@Param('id') id: number) {
+        console.log(id);
         return this.usersService.getById(id);
     }
 
@@ -35,14 +36,14 @@ export class UsersController {
     @ApiResponse({ status: 200, type: User})
     @UsePipes(ValidationPipe)
     @Patch(':id/')
-    update(@Param() id: number, @Body() userDto: CreateUserDto) {
+    update(@Param('id') id: number, @Body() userDto: CreateUserDto) {
         return this.usersService.update(id, userDto);
     }
 
     @ApiOperation({ summary: 'Delete user and return it'})
     @ApiResponse({ status: 200, type: User})
     @Delete(':id/')
-    delete(@Param() id: number) {
+    delete(@Param('id') id: number) {
         return this.usersService.delete(id);
     }
 

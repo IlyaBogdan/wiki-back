@@ -38,8 +38,13 @@ export class AuthService {
         if (bearer !== 'Bearer' || !token) {
             throw new HttpException('You have no roles for this request', HttpStatus.FORBIDDEN);
         }
-
-        return this.jwtService.verify(token);
+        
+        try {
+            return this.jwtService.verify(token);
+        } catch (error) {
+            throw new HttpException('Unathorized', HttpStatus.UNAUTHORIZED);
+        }
+        
     }
 
     async loginedUser(headers: any) {
