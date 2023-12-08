@@ -17,7 +17,7 @@ export class OrganisationController {
 
     @ApiOperation({ summary: 'Create organisation'})
     @ApiResponse({ status: 200, type: [Organisation]})
-    @Auth(RolesTypes.GLOBAL_ADMIN)
+    @Auth()
     @Post()
     create(@Body() createDto: CreateOrganisationDto) {
         //return this.organisationService.create()
