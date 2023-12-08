@@ -7,6 +7,7 @@ import { Roles } from 'src/auth/roles-auth.decorator';
 import { RolesGuard } from 'src/auth/roles.guard';
 import { AddRoleDto } from './dto/add-role.dto';
 import { RoleValue as RolesTypes } from 'src/roles/roles.types';
+import { Auth } from 'src/auth/auth.decorator';
 
 @ApiTags('Users')
 @Controller('users')
@@ -18,6 +19,7 @@ export class UsersController {
 
     @ApiOperation({ summary: 'Creeate new user'})
     @ApiResponse({ status: 200, type: User})
+    @Auth()
     @UsePipes(ValidationPipe)
     @Post()
     create(@Body() userDto: CreateUserDto) {
@@ -26,6 +28,7 @@ export class UsersController {
 
     @ApiOperation({ summary: 'Get user info'})
     @ApiResponse({ status: 200, type: User})
+    @Auth()
     @Get(':id/')
     read(@Param('id') id: number) {
         console.log(id);
@@ -34,6 +37,7 @@ export class UsersController {
 
     @ApiOperation({ summary: 'Update user info'})
     @ApiResponse({ status: 200, type: User})
+    @Auth()
     @UsePipes(ValidationPipe)
     @Patch(':id/')
     update(@Param('id') id: number, @Body() userDto: CreateUserDto) {
@@ -49,8 +53,7 @@ export class UsersController {
 
     @ApiOperation({ summary: 'Get all users'})
     @ApiResponse({ status: 200, type: [User]})
-    @Roles(RolesTypes.GLOBAL_ADMIN)
-    @UseGuards(RolesGuard)
+    @Auth(RolesTypes.GLOBAL_ADMIN)
     @Get()
     getAll() {
         return this.usersService.getAll();
@@ -58,8 +61,7 @@ export class UsersController {
 
     @ApiOperation({ summary: 'Assign Role'})
     @ApiResponse({ status: 200})
-    @Roles(RolesTypes.GLOBAL_ADMIN)
-    @UseGuards(RolesGuard)
+    @Auth(RolesTypes.GLOBAL_ADMIN)
     @Post('/role')
     assignRole(@Body() addRoleDto: AddRoleDto) {
         return this.usersService.assignRole(addRoleDto);

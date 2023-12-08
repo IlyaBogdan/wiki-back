@@ -6,6 +6,7 @@ import { RolesGuard } from 'src/auth/roles.guard';
 import { Organisation } from './organisation.model';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { CreateOrganisationDto } from './dto/create.dto';
+import { Auth } from 'src/auth/auth.decorator';
 
 @Controller('organisation')
 export class OrganisationController {
@@ -16,8 +17,7 @@ export class OrganisationController {
 
     @ApiOperation({ summary: 'Create organisation'})
     @ApiResponse({ status: 200, type: [Organisation]})
-    @Roles(RolesTypes.GLOBAL_ADMIN)
-    @UseGuards(RolesGuard)
+    @Auth(RolesTypes.GLOBAL_ADMIN)
     @Post()
     create(@Body() createDto: CreateOrganisationDto) {
         //return this.organisationService.create()

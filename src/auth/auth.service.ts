@@ -32,12 +32,14 @@ export class AuthService {
     }
 
     verifyHeader(authHeader: string) {
-        const bearer = authHeader.split(' ')[0];
-        const token = authHeader.split(' ')[1];
+        const [bearer, token] = authHeader.split(' ');
 
+        
         if (bearer !== 'Bearer' || !token) {
             throw new HttpException('You have no roles for this request', HttpStatus.FORBIDDEN);
         }
+
+        
         
         try {
             return this.jwtService.verify(token);

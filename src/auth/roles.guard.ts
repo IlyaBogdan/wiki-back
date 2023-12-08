@@ -1,6 +1,5 @@
-import { CanActivate, ExecutionContext, HttpException, HttpStatus, Injectable, UnauthorizedException } from "@nestjs/common";
+import { CanActivate, ExecutionContext, HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
-import { JwtService } from "@nestjs/jwt";
 import { Observable } from "rxjs";
 import { ROLES_KEY } from "./roles-auth.decorator";
 import { CreateRoleDto as RoleType } from "src/roles/dto/create-role.dto";
@@ -10,7 +9,6 @@ import { AuthService } from "./auth.service";
 export class RolesGuard implements CanActivate {
 
     constructor(
-        private readonly jwtService: JwtService,
         private readonly reflector: Reflector,
         private readonly authService: AuthService
     ) {}
@@ -24,21 +22,24 @@ export class RolesGuard implements CanActivate {
                 context.getClass()
             ]);
 
-            if (!requiredRoles) {
-                return true;
-            }
-
             const req = context.switchToHttp().getRequest();
-            const authHeader = req.headers.authorization;
+            const user = this.authorizedUser(req);
 
-            const user = this.authService.verifyHeader(authHeader);
             
             req.user = user;
 
+            if (!requiredRoles.length) return true;
+            
             return user.roles[0].some((role: RoleType) => requiredRoles.includes(role.value));
 
         } catch (e) {
+            console.log('here');
             throw new HttpException('You have no roles for this request', HttpStatus.FORBIDDEN);
         }
+    }
+
+    private authorizedUser(req: any) {
+        const authHeader = req.headers.authorization;
+        return this.authService.verifyHeader(authHeader);
     }
 }
