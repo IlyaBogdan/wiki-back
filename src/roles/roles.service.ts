@@ -3,6 +3,7 @@ import { CreateRoleDto } from './dto/create-role.dto';
 import { InjectModel } from '@nestjs/sequelize';
 import { Role } from './roles.model';
 import { RoleValue } from './roles.types';
+import { User } from 'src/users/users.model';
 
 @Injectable()
 export class RolesService {
@@ -33,5 +34,11 @@ export class RolesService {
     async getRoleByValue(value: string) {
         const role = await this.roleRepository.findOne({ where: {value} });
         return role;
+    }
+
+    checkUserRole(user: User, role: RoleValue): boolean {
+        console.log(user.roles);
+
+        return true;
     }
 }

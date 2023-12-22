@@ -6,7 +6,6 @@ async function start() {
     const port = process.env.BACK_PORT;
     const app = await NestFactory.create(AppModule);
 
-
     const config = new DocumentBuilder()
         .setTitle('Backend for Project Management System')
         .setDescription('REST API Documentation')

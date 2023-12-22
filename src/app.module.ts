@@ -10,6 +10,7 @@ import { AuthModule } from './auth/auth.module';
 import { OrganisationModule } from './organisation/organisation.module';
 import { ProfileModule } from './profile/profile.module';
 import { Profile } from "./profile/profile.model";
+import { Organisation } from "./organisation/organisation.model";
 
 @Module({
     imports: [
@@ -24,7 +25,7 @@ import { Profile } from "./profile/profile.model";
             password: process.env.POSTGRES_PASSWORD,
             database: process.env.POSTGRES_DB,
             autoLoadModels: true,
-            models: [User, Role, UserRoles, Profile]
+            models: [User, Role, UserRoles, Profile, Organisation]
         }),
         UsersModule,
         RolesModule,

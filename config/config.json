@@ -1,0 +1,23 @@
+{
+  "development": {
+    "username": "wiki_back",
+    "password": "nthfjIIdaw",
+    "database": "wiki",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  },
+  "test": {
+    "username": "wiki_back",
+    "password": "nthfjIIdaw",
+    "database": "wiki",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  },
+  "production": {
+    "username": "wiki_back",
+    "password": "nthfjIIdaw",
+    "database": "wiki",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  }
+}

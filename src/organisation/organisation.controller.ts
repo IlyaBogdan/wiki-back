@@ -1,8 +1,5 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Query, UseGuards, Headers } from '@nestjs/common';
 import { OrganisationService } from './organisation.service';
-import { Roles } from 'src/auth/roles-auth.decorator';
-import { RoleValue as RolesTypes } from 'src/roles/roles.types';
-import { RolesGuard } from 'src/auth/roles.guard';
 import { Organisation } from './organisation.model';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { CreateOrganisationDto } from './dto/create.dto';
@@ -15,11 +12,36 @@ export class OrganisationController {
         private readonly organisationService: OrganisationService
     ) {}
 
+    @ApiOperation({ summary: 'Organisations list'})
+    @ApiResponse({ status: 200, type: [Organisation]})
+    @Auth()
+    @Get('/all')
+    all(@Headers() headers, @Query('userId') userId: number|null) {
+        const servicePayload = { headers, userId };
+        return this.organisationService.all(servicePayload);
+    }
+
+    @ApiOperation({ summary: 'Create organisation'})
+    @ApiResponse({ status: 200, type: Organisation})
+    @Auth()
+    @Post('/create')
+    create(@Body() createDto: CreateOrganisationDto) {
+        //return this.organisationService.create()
+    }
+
+    @ApiOperation({ summary: 'Update organisation'})
+    @ApiResponse({ status: 200, type: [Organisation]})
+    @Auth()
+    @Post(':id/update')
+    update(@Body() createDto: CreateOrganisationDto) {
+        //return this.organisationService.create()
+    }
+
     @ApiOperation({ summary: 'Create organisation'})
     @ApiResponse({ status: 200, type: [Organisation]})
     @Auth()
-    @Post()
-    create(@Body() createDto: CreateOrganisationDto) {
+    @Delete(':id/delete')
+    delete(@Body() createDto: CreateOrganisationDto) {
         //return this.organisationService.create()
     }
 }
