@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { AuthService } from 'src/auth/auth.service';
 import { RolesService } from 'src/roles/roles.service';
@@ -6,8 +6,8 @@ import { RoleValue } from 'src/roles/roles.types';
 import { User } from 'src/users/users.model';
 import { Organisation } from './organisation.model';
 import { CreateOrganisationDto } from './dto/create.dto';
-import { UsersService } from 'src/users/users.service';
-import { Role } from 'src/roles/roles.model';
+import { repos } from 'consts/consts';
+import { UserRoles } from 'src/roles/user-roles.model';
 
 @Injectable()
 export class OrganisationService {
@@ -15,10 +15,9 @@ export class OrganisationService {
     constructor(
         private readonly authService: AuthService,
         private readonly rolesService: RolesService,
-        private readonly usersService: UsersService,
 
         @InjectModel(Organisation) private readonly organisationRepository: typeof Organisation,
-        @InjectModel(Role) private readonly roleRepository: typeof Role
+        @Inject(repos.roles) private readonly roleRepository: typeof UserRoles
     ) {}
 
     async onModuleInit() {
@@ -32,6 +31,25 @@ export class OrganisationService {
 
     async create(dto: CreateOrganisationDto) {
         const organisation = await this.organisationRepository.create(dto);
+        const role = await this.rolesService.getRoleByValue(RoleValue.ORGANISATION_ADMIN);
+        this.roleRepository.create({ organisationId: organisation.id, userId: dto.ownerId, roleId: role.id });
+        
+
+        return organisation;
+    }
+
+    async update(organisationId: number, dto: CreateOrganisationDto) {
+        const organisation = await this.organisationRepository.findByPk(organisationId);
+        Object.assign(organisation, dto);
+        await organisation.save();
+
+        return organisation;
+    }
+
+    async delete(organisationId: number) {
+        const organisation = await this.organisationRepository.findByPk(organisationId);
+        await organisation.destroy();
+
         return organisation;
     }
 
@@ -46,7 +64,6 @@ export class OrganisationService {
             }
         } else {
             if(this.rolesService.checkUserRole(user, RoleValue.GLOBAL_ADMIN)) {
-                return await this.userOrganisations(user);
                 return await this.organisationRepository.findAll();
             } else {
                 return await this.userOrganisations(user);
@@ -56,7 +73,10 @@ export class OrganisationService {
 
     async userOrganisations(user: User) {
 
-        const roles = this.roleRepository.findAll({ where: { users: [user] }});
-        console.log(roles, user);
+        const roles = await this.roleRepository.findAll({ where: { userId: user.id }});
+        const organisationIds = Array.from(new Set(roles.map((role) => role.organisationId)));
+
+        const organisations = await this.organisationRepository.findAll({ where: { id: organisationIds }});
+        return organisations;
     }
 }

@@ -25,7 +25,6 @@ export class RolesGuard implements CanActivate {
             const req = context.switchToHttp().getRequest();
             const user = this.authorizedUser(req);
 
-            
             req.user = user;
 
             if (!requiredRoles.length) return true;
@@ -33,7 +32,6 @@ export class RolesGuard implements CanActivate {
             return user.roles[0].some((role: RoleType) => requiredRoles.includes(role.value));
 
         } catch (e) {
-            console.log('here');
             throw new HttpException('You have no roles for this request', HttpStatus.FORBIDDEN);
         }
     }

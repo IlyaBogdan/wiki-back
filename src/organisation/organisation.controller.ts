@@ -4,6 +4,7 @@ import { Organisation } from './organisation.model';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { CreateOrganisationDto } from './dto/create.dto';
 import { Auth } from 'src/auth/auth.decorator';
+import { UpdateOrganisationDto } from './dto/update.dto';
 
 @Controller('organisation')
 export class OrganisationController {
@@ -26,22 +27,22 @@ export class OrganisationController {
     @Auth()
     @Post('/create')
     create(@Body() createDto: CreateOrganisationDto) {
-        //return this.organisationService.create()
+        return this.organisationService.create(createDto)
     }
 
     @ApiOperation({ summary: 'Update organisation'})
     @ApiResponse({ status: 200, type: [Organisation]})
     @Auth()
-    @Post(':id/update')
-    update(@Body() createDto: CreateOrganisationDto) {
-        //return this.organisationService.create()
+    @Post('/:id/update')
+    update(@Param('id') id: number, @Body() updateDto: UpdateOrganisationDto) {
+        return this.organisationService.update(id, updateDto)
     }
 
     @ApiOperation({ summary: 'Create organisation'})
     @ApiResponse({ status: 200, type: [Organisation]})
     @Auth()
-    @Delete(':id/delete')
-    delete(@Body() createDto: CreateOrganisationDto) {
-        //return this.organisationService.create()
+    @Delete('/:id/delete')
+    delete(@Param('id') id: number) {
+        return this.organisationService.delete(id)
     }
 }

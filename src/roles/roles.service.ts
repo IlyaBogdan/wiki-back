@@ -1,15 +1,19 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { InjectModel } from '@nestjs/sequelize';
 import { Role } from './roles.model';
 import { RoleValue } from './roles.types';
 import { User } from 'src/users/users.model';
+import { repos } from 'consts/consts';
+import { UsersService } from 'src/users/users.service';
+import { UserRoles } from './user-roles.model';
 
 @Injectable()
 export class RolesService {
 
     constructor(
-        @InjectModel(Role) private readonly roleRepository: typeof Role
+        @InjectModel(Role) private readonly roleRepository: typeof Role,
+        @Inject(repos.roles) private readonly rolesMapRepository: typeof UserRoles
     ) {}
 
     async onModuleInit() {
@@ -36,9 +40,16 @@ export class RolesService {
         return role;
     }
 
-    checkUserRole(user: User, role: RoleValue): boolean {
-        console.log(user.roles);
+    async checkUserRole(user: User, role: RoleValue, organisationId: number = null): Promise<boolean> {
+        if (organisationId == null && role != RoleValue.GLOBAL_ADMIN) {
+            throw new Error('Passed required param organisationId');
+        } else {
 
-        return true;
+        }
+
+        const roleId = (await this.getRoleByValue(role)).id;
+        const userRoles = await this.rolesMapRepository.findAll({ where: { organisationId, roleId, userId: user.id }});
+
+        return userRoles.length ? true : false;
     }
 }

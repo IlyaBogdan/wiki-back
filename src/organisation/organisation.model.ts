@@ -22,4 +22,7 @@ export class Organisation extends Model<Organisation, OrganisationCreationAttrs>
     @ForeignKey(() => User)
     @Column({type: DataType.INTEGER, allowNull: false})
     ownerId: number;
+
+    @BelongsToMany(() => Role, () => UserRoles)
+    roles: Role[];
 }
